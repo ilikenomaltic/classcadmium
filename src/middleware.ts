@@ -13,9 +13,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -25,19 +23,50 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Do not add logic between createServerClient and getUser().
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
   const publicPaths = ['/login', '/signup']
   const isPublicPath = publicPaths.some((p) => pathname.startsWith(p))
 
-  if (!user && !isPublicPath) {
-    const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/login'
-    return NextResponse.redirect(loginUrl)
+  if (!user) {
+    if (!isPublicPath) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+    return supabaseResponse
+  }
+
+  // Authenticated — fetch role for redirect logic
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const role = profile?.role
+  const isTeacherPath = pathname.startsWith('/teacher')
+
+  // Root / → redirect to role-appropriate dashboard
+  if (pathname === '/') {
+    const url = request.nextUrl.clone()
+    url.pathname = role === 'teacher' ? '/teacher/dashboard' : '/dashboard'
+    return NextResponse.redirect(url)
+  }
+
+  // Student accessing /dashboard → redirect teacher away
+  if (role === 'teacher' && !isTeacherPath && !isPublicPath && pathname !== '/') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/teacher/dashboard'
+    return NextResponse.redirect(url)
+  }
+
+  // Teacher accessing student routes
+  if (role === 'student' && isTeacherPath) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
   }
 
   return supabaseResponse

@@ -3,7 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BeakerIcon } from '@heroicons/react/24/solid'
-import { Squares2X2Icon, DocumentPlusIcon } from '@heroicons/react/24/outline'
+import {
+  Squares2X2Icon,
+  DocumentPlusIcon,
+  ClipboardDocumentListIcon,
+  ChartBarIcon,
+} from '@heroicons/react/24/outline'
 
 interface NavLink {
   href: string
@@ -12,8 +17,10 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { href: '/teacher/dashboard', label: '반 관리', Icon: Squares2X2Icon },
-  { href: '/teacher/create',    label: '출제',    Icon: DocumentPlusIcon },
+  { href: '/teacher/classes',     label: '반 관리', Icon: Squares2X2Icon },
+  { href: '/teacher/create',      label: '출제',    Icon: DocumentPlusIcon },
+  { href: '/teacher/assignments', label: '배정 목록', Icon: ClipboardDocumentListIcon },
+  { href: '/teacher/results',     label: '결과',    Icon: ChartBarIcon },
 ]
 
 export default function TeacherHeader() {
@@ -28,7 +35,7 @@ export default function TeacherHeader() {
             className="flex items-center gap-2 text-indigo-600 font-bold text-lg"
           >
             <BeakerIcon className="w-6 h-6" aria-hidden="true" />
-            <span>Classcadmium</span>
+            <span className="hidden sm:inline">Classcadmium</span>
           </Link>
 
           <nav aria-label="Teacher navigation">
@@ -40,8 +47,8 @@ export default function TeacherHeader() {
                     <Link
                       href={href}
                       className={[
-                        'flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium',
-                        'transition-colors duration-150 min-h-[48px]',
+                        'flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium',
+                        'transition-colors duration-150 min-h-[44px]',
                         isActive
                           ? 'bg-indigo-50 text-indigo-600'
                           : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800',
@@ -49,7 +56,7 @@ export default function TeacherHeader() {
                       aria-current={isActive ? 'page' : undefined}
                     >
                       <Icon className="w-4 h-4" aria-hidden="true" />
-                      {label}
+                      <span className="hidden sm:inline">{label}</span>
                     </Link>
                   </li>
                 )
