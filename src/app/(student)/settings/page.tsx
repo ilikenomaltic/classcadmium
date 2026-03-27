@@ -55,12 +55,20 @@ export default async function SettingsPage() {
       </div>
 
       {profile?.role === 'admin' && (
-        <Link
-          href="/admin"
-          className="block w-full mb-4 py-4 rounded-2xl bg-gray-900 text-white font-semibold text-sm text-center hover:bg-gray-800 transition-colors"
-        >
-          🛡️ 관리자 대시보드
-        </Link>
+        <>
+          <Link
+            href="/teacher/dashboard"
+            className="block w-full mb-3 py-4 rounded-2xl bg-indigo-600 text-white font-semibold text-sm text-center hover:bg-indigo-700 transition-colors"
+          >
+            👩‍🏫 선생님 대시보드
+          </Link>
+          <Link
+            href="/admin"
+            className="block w-full mb-4 py-4 rounded-2xl bg-gray-900 text-white font-semibold text-sm text-center hover:bg-gray-800 transition-colors"
+          >
+            🛡️ 관리자 대시보드
+          </Link>
+        </>
       )}
 
       <LogoutButton />

@@ -16,9 +16,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="bg-gray-900 text-white sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <span className="font-bold text-sm tracking-wider text-gray-200">CLASSCADMIUM ADMIN</span>
-          <Link href="/dashboard" className="text-xs text-gray-400 hover:text-white transition-colors">
-            앱으로 돌아가기 →
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/teacher/dashboard" className="text-xs text-indigo-300 hover:text-white transition-colors">
+              👩‍🏫 선생님 기능
+            </Link>
+            <Link href="/dashboard" className="text-xs text-gray-400 hover:text-white transition-colors">
+              앱으로 돌아가기 →
+            </Link>
+          </div>
         </div>
       </header>
       <main className="max-w-5xl mx-auto px-4 py-8">

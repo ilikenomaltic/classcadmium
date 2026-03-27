@@ -1,14 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useActionState } from 'react'
-import { BeakerIcon } from '@heroicons/react/24/solid'
+import { useActionState, useState } from 'react'
+import { BeakerIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'
 import { signIn } from './actions'
 import { motion } from 'framer-motion'
 import { scaleOnTap } from '@/lib/constants/animation'
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(signIn, null)
+  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -35,11 +36,23 @@ export default function LoginPage() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
-            <input
-              id="password" name="password" type="password" required
-              placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
+            <div className="relative">
+              <input
+                id="password" name="password" type={showPassword ? 'text' : 'password'} required
+                placeholder="••••••••"
+                className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword
+                  ? <EyeSlashIcon className="w-5 h-5" />
+                  : <EyeIcon className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           {state?.error && (

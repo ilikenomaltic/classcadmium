@@ -9,15 +9,20 @@ export async function signUp(_prevState: { error: string } | null, formData: For
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const role = formData.get('role') as 'student' | 'teacher'
+  const studentId = formData.get('student_id') as string | null
 
   if (!name || !email || !password || !role) {
     return { error: '모든 항목을 입력해주세요.' }
   }
 
+  if (role === 'student' && !studentId) {
+    return { error: '학번을 입력해주세요.' }
+  }
+
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { name, role } },
+    options: { data: { name, role, student_id: studentId ?? null } },
   })
 
   if (error) return { error: error.message }
