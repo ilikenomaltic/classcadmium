@@ -29,43 +29,9 @@ export async function middleware(request: NextRequest) {
   const publicPaths = ['/login', '/signup']
   const isPublicPath = publicPaths.some((p) => pathname.startsWith(p))
 
-  if (!user) {
-    if (!isPublicPath) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      return NextResponse.redirect(url)
-    }
-    return supabaseResponse
-  }
-
-  // Authenticated — fetch role for redirect logic
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  const role = profile?.role
-  const isTeacherPath = pathname.startsWith('/teacher')
-
-  // Root / → redirect to role-appropriate dashboard
-  if (pathname === '/') {
+  if (!user && !isPublicPath) {
     const url = request.nextUrl.clone()
-    url.pathname = role === 'teacher' ? '/teacher/dashboard' : '/dashboard'
-    return NextResponse.redirect(url)
-  }
-
-  // Student accessing /dashboard → redirect teacher away
-  if (role === 'teacher' && !isTeacherPath && !isPublicPath && pathname !== '/') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/teacher/dashboard'
-    return NextResponse.redirect(url)
-  }
-
-  // Teacher accessing student routes
-  if (role === 'student' && isTeacherPath) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
