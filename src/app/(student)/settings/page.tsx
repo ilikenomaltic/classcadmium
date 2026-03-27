@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/student/LogoutButton'
 
 const ROLE_LABELS: Record<string, string> = {
   student: '🎓 학생',
   teacher: '👩‍🏫 선생님',
+  admin: '🛡️ 관리자',
 }
 
 export default async function SettingsPage() {
@@ -14,9 +16,11 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, email, role')
+    .select('name, email, role, requested_role')
     .eq('id', user.id)
     .single()
+
+  const isPendingTeacher = profile?.requested_role === 'teacher' && profile?.role === 'student'
 
   return (
     <div className="py-6">
@@ -33,15 +37,31 @@ export default async function SettingsPage() {
           </div>
         </div>
 
-        <div className="border-t border-gray-100 pt-4">
+        <div className="border-t border-gray-100 pt-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-500">역할</span>
             <span className="text-sm font-medium text-gray-800">
               {ROLE_LABELS[profile?.role ?? 'student']}
             </span>
           </div>
+
+          {isPendingTeacher && (
+            <div className="flex items-center justify-between bg-yellow-50 rounded-xl px-4 py-3">
+              <span className="text-sm text-yellow-700 font-medium">선생님 승인 대기 중</span>
+              <span className="text-xs bg-yellow-100 text-yellow-600 font-bold px-2.5 py-1 rounded-full">검토 중</span>
+            </div>
+          )}
         </div>
       </div>
+
+      {profile?.role === 'admin' && (
+        <Link
+          href="/admin"
+          className="block w-full mb-4 py-4 rounded-2xl bg-gray-900 text-white font-semibold text-sm text-center hover:bg-gray-800 transition-colors"
+        >
+          🛡️ 관리자 대시보드
+        </Link>
+      )}
 
       <LogoutButton />
     </div>

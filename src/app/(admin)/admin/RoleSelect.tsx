@@ -17,7 +17,7 @@ export default function RoleSelect({ userId, currentRole }: { userId: string; cu
 
   function handleChange(newRole: string) {
     if (newRole === role) return
-    startTransition(async () => {
+    startTransition(async (): Promise<void> => {
       const result = await updateUserRole(userId, newRole as 'student' | 'teacher' | 'admin')
       if (result.error) {
         setError(result.error)

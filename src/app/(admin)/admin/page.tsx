@@ -1,20 +1,13 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import RoleSelect from './RoleSelect'
-
-const ROLE_BADGE: Record<string, string> = {
-  student: 'bg-gray-100 text-gray-600',
-  teacher: 'bg-indigo-100 text-indigo-700',
-  admin: 'bg-red-100 text-red-700',
-}
-const ROLE_LABEL: Record<string, string> = {
-  student: '학생', teacher: '선생님', admin: '관리자',
-}
+import ApproveButtons from './ApproveButtons'
 
 interface Profile {
   id: string
   email: string
   name: string
   role: string
+  requested_role: string | null
   created_at: string
 }
 
@@ -23,17 +16,17 @@ export default async function AdminPage() {
 
   const { data: profiles } = await admin
     .from('profiles')
-    .select('id, email, name, role, created_at')
+    .select('id, email, name, role, requested_role, created_at')
     .order('created_at', { ascending: false })
 
   const rows = (profiles ?? []) as Profile[]
+  const pending = rows.filter(p => p.requested_role === 'teacher' && p.role === 'student')
 
   const total = rows.length
   const byRole = rows.reduce<Record<string, number>>((acc, p) => {
     acc[p.role] = (acc[p.role] ?? 0) + 1
     return acc
   }, {})
-
   const today = new Date().toDateString()
   const todayCount = rows.filter(p => new Date(p.created_at).toDateString() === today).length
 
@@ -59,22 +52,53 @@ export default async function AdminPage() {
         ))}
       </div>
 
+      {/* Pending teacher approvals */}
+      {pending.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <h2 className="text-sm font-semibold text-gray-700">선생님 승인 대기</h2>
+            <span className="text-xs bg-yellow-400 text-white font-bold px-2 py-0.5 rounded-full">
+              {pending.length}
+            </span>
+          </div>
+          <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-yellow-100">
+            <div className="divide-y divide-gray-50">
+              {pending.map(p => (
+                <div key={p.id} className="flex items-center justify-between px-5 py-4 gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 text-sm">{p.name}</p>
+                    <p className="text-xs text-gray-400 truncate">{p.email}</p>
+                  </div>
+                  <span className="text-xs text-gray-400 whitespace-nowrap">
+                    {new Date(p.created_at).toLocaleDateString('ko-KR')}
+                  </span>
+                  <ApproveButtons userId={p.id} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* User table */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">가입자 목록 ({total}명)</h2>
+        <h2 className="text-sm font-semibold text-gray-700 mb-3">전체 가입자 ({total}명)</h2>
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-          {/* Header */}
           <div className="grid grid-cols-[1fr_1.5fr_auto_auto] gap-4 px-5 py-3 border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
             <span>이름</span>
             <span>이메일</span>
             <span>가입일</span>
             <span>권한</span>
           </div>
-          {/* Rows */}
           <div className="divide-y divide-gray-50">
             {rows.map(p => (
               <div key={p.id} className="grid grid-cols-[1fr_1.5fr_auto_auto] gap-4 px-5 py-3.5 items-center">
-                <span className="font-medium text-gray-900 text-sm truncate">{p.name}</span>
+                <div className="min-w-0">
+                  <span className="font-medium text-gray-900 text-sm truncate block">{p.name}</span>
+                  {p.requested_role === 'teacher' && p.role === 'student' && (
+                    <span className="text-xs text-yellow-600">승인 대기 중</span>
+                  )}
+                </div>
                 <span className="text-gray-500 text-sm truncate">{p.email}</span>
                 <span className="text-gray-400 text-xs whitespace-nowrap">
                   {new Date(p.created_at).toLocaleDateString('ko-KR')}

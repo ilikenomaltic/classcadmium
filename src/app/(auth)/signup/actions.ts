@@ -22,5 +22,10 @@ export async function signUp(_prevState: { error: string } | null, formData: For
 
   if (error) return { error: error.message }
 
-  redirect(role === 'teacher' ? '/teacher/dashboard' : '/dashboard')
+  // Teacher signups wait for admin approval (saved as student + requested_role='teacher')
+  if (role === 'teacher') {
+    redirect('/dashboard?pending=teacher')
+  }
+
+  redirect('/dashboard')
 }
