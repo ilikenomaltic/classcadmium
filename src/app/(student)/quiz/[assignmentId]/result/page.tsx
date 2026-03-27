@@ -1,13 +1,12 @@
 'use client'
 
-import { use } from 'react'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { staggerContainer, fadeInUp, scaleOnTap } from '@/lib/constants/animation'
 
-export default function QuizResultPage({ params }: { params: Promise<{ assignmentId: string }> }) {
-  void use(params)
+function QuizResult() {
   const sp = useSearchParams()
 
   const score = Number(sp.get('score') ?? 0)
@@ -29,13 +28,7 @@ export default function QuizResultPage({ params }: { params: Promise<{ assignmen
 
   return (
     <div className="py-6">
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-        className="space-y-6"
-      >
-        {/* Score circle */}
+      <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
         <motion.div variants={fadeInUp} className="flex flex-col items-center py-8">
           <div className="relative w-36 h-36">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
@@ -58,12 +51,9 @@ export default function QuizResultPage({ params }: { params: Promise<{ assignmen
             </div>
           </div>
           <p className="mt-4 text-xl font-bold text-gray-900">{message}</p>
-          <p className="text-sm text-gray-500 mt-1">
-            {total}문제 중 {correct}개 정답
-          </p>
+          <p className="text-sm text-gray-500 mt-1">{total}문제 중 {correct}개 정답</p>
         </motion.div>
 
-        {/* Stats */}
         <motion.div variants={fadeInUp} className="grid grid-cols-3 gap-3">
           {[
             { label: '총 문제', value: total, color: 'text-gray-900' },
@@ -77,7 +67,6 @@ export default function QuizResultPage({ params }: { params: Promise<{ assignmen
           ))}
         </motion.div>
 
-        {/* Actions */}
         <motion.div variants={fadeInUp} className="space-y-3">
           <Link href="/quiz">
             <motion.div
@@ -90,5 +79,13 @@ export default function QuizResultPage({ params }: { params: Promise<{ assignmen
         </motion.div>
       </motion.div>
     </div>
+  )
+}
+
+export default function QuizResultPage() {
+  return (
+    <Suspense fallback={<div className="py-6"><div className="h-36 w-36 mx-auto bg-gray-100 rounded-full animate-pulse" /></div>}>
+      <QuizResult />
+    </Suspense>
   )
 }

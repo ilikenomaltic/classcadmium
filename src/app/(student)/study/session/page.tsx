@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { Suspense, useEffect, useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
@@ -8,7 +8,7 @@ import FlashCard from '@/components/student/FlashCard'
 import { shuffle } from '@/lib/utils/shuffle'
 import type { Item } from '@/lib/types'
 
-export default function StudySessionPage() {
+function StudySession() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [cards, setCards] = useState<Item[]>([])
@@ -88,7 +88,6 @@ export default function StudySessionPage() {
 
   return (
     <div className="py-6">
-      {/* Progress */}
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => router.push('/study')} className="text-gray-400 text-sm">✕ 종료</button>
         <span className="text-sm font-medium text-gray-500">{index + 1} / {cards.length}</span>
@@ -101,7 +100,6 @@ export default function StudySessionPage() {
         />
       </div>
 
-      {/* Card with swipe */}
       <AnimatePresence mode="wait">
         <motion.div
           key={card.id}
@@ -120,7 +118,6 @@ export default function StudySessionPage() {
           transition={{ duration: 0.2 }}
           className="relative"
         >
-          {/* Swipe hint overlays */}
           <motion.div
             className="absolute inset-0 rounded-2xl bg-[#4ECDC4] pointer-events-none z-10"
             style={{ opacity: bgGreen }}
@@ -140,7 +137,6 @@ export default function StudySessionPage() {
 
       <p className="text-center text-xs text-gray-400 mt-3">← 스와이프로도 답변 가능</p>
 
-      {/* Action buttons */}
       <div className="flex gap-3 mt-6">
         <motion.button
           whileTap={{ scale: 0.96 }}
@@ -158,5 +154,13 @@ export default function StudySessionPage() {
         </motion.button>
       </div>
     </div>
+  )
+}
+
+export default function StudySessionPage() {
+  return (
+    <Suspense fallback={<div className="py-6"><div className="w-full h-[280px] bg-gray-100 rounded-2xl animate-pulse" /></div>}>
+      <StudySession />
+    </Suspense>
   )
 }

@@ -1,10 +1,11 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { staggerContainer, fadeInUp, scaleOnTap } from '@/lib/constants/animation'
 
-export default function StudyResultPage() {
+function StudyResult() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -22,7 +23,6 @@ export default function StudyResultPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-8">학습 결과</h1>
 
       <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
-        {/* Score circle */}
         <motion.div variants={fadeInUp} className="flex flex-col items-center">
           <div
             className="w-36 h-36 rounded-full flex flex-col items-center justify-center border-8 mb-4"
@@ -36,7 +36,6 @@ export default function StudyResultPage() {
           </p>
         </motion.div>
 
-        {/* Stats */}
         <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-3">
           <div className="bg-[#4ECDC4]/10 rounded-2xl p-4 text-center">
             <p className="text-3xl font-bold text-[#4ECDC4]">{known}</p>
@@ -48,7 +47,6 @@ export default function StudyResultPage() {
           </div>
         </motion.div>
 
-        {/* Buttons */}
         <motion.div variants={fadeInUp} className="flex flex-col gap-3">
           {unknownCount > 0 && unknownIds && (
             <motion.button
@@ -76,5 +74,13 @@ export default function StudyResultPage() {
         </motion.div>
       </motion.div>
     </div>
+  )
+}
+
+export default function StudyResultPage() {
+  return (
+    <Suspense fallback={<div className="py-6"><div className="h-36 w-36 mx-auto bg-gray-100 rounded-full animate-pulse" /></div>}>
+      <StudyResult />
+    </Suspense>
   )
 }
