@@ -6,7 +6,7 @@
 create table public.profiles (
   id    uuid primary key references auth.users on delete cascade,
   email text not null,
-  role  text not null check (role in ('student', 'teacher')),
+  role  text not null check (role in ('student', 'teacher', 'admin')),
   name  text not null
 );
 
