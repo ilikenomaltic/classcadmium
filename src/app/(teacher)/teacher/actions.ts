@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { calculatePoints } from '@/lib/utils/points'
 
 type ActionState = { error: string } | null
 
@@ -76,13 +77,32 @@ export async function submitQuizResult(
   assignmentId: string,
   score: number,
   detail: { itemId: string; given: string; correct: boolean }[]
-) {
+): Promise<{ earnedPoints: number }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: '로그인이 필요합니다.' }
+  if (!user) return { earnedPoints: 0 }
 
   await supabase.from('quiz_results').upsert(
     { student_id: user.id, assignment_id: assignmentId, score, answers: detail },
     { onConflict: 'student_id,assignment_id' }
   )
+
+  const { data: assignment } = await supabase
+    .from('quiz_assignments')
+    .select('mode, difficulty')
+    .eq('id', assignmentId)
+    .single()
+
+  const earnedPoints = calculatePoints(
+    detail.length,
+    assignment?.mode ?? 'flashcard',
+    assignment?.difficulty ?? 'normal',
+    score
+  )
+
+  if (earnedPoints > 0) {
+    await supabase.rpc('add_points', { p_user_id: user.id, p_amount: earnedPoints })
+  }
+
+  return { earnedPoints }
 }
