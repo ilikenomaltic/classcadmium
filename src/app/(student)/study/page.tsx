@@ -15,11 +15,17 @@ const COUNT_OPTIONS = [
   { label: '전체', value: 0 },
 ]
 
+const MODE_OPTIONS = [
+  { label: '플래시카드', value: 'flashcard', desc: '카드 뒤집기' },
+  { label: '4지선다', value: 'multiple', desc: '보기 4개 중 선택' },
+]
+
 export default function StudyPage() {
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [count, setCount] = useState<number>(10)
+  const [mode, setMode] = useState<string>('flashcard')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -41,7 +47,7 @@ export default function StudyPage() {
   function handleStart() {
     if (selectedIds.size === 0) return
     const cats = Array.from(selectedIds).join(',')
-    router.push(`/study/session?cats=${cats}&count=${count}`)
+    router.push(`/study/session?cats=${cats}&count=${count}&mode=${mode}`)
   }
 
   return (
@@ -70,6 +76,29 @@ export default function StudyPage() {
                   selected={selectedIds.has(cat.id)}
                   onToggle={() => toggleCategory(cat.id)}
                 />
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Mode selection */}
+          <motion.div variants={fadeInUp}>
+            <h2 className="text-sm font-semibold text-gray-700 mb-3">모드 선택</h2>
+            <div className="flex gap-2">
+              {MODE_OPTIONS.map(opt => (
+                <motion.button
+                  key={opt.value}
+                  {...scaleOnTap}
+                  onClick={() => setMode(opt.value)}
+                  className={[
+                    'flex-1 py-3 px-3 rounded-2xl border-2 text-sm font-medium transition-colors duration-150 text-left',
+                    mode === opt.value
+                      ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                      : 'border-gray-200 text-gray-600',
+                  ].join(' ')}
+                >
+                  <div className="font-semibold">{opt.label}</div>
+                  <div className="text-xs opacity-60 mt-0.5">{opt.desc}</div>
+                </motion.button>
               ))}
             </div>
           </motion.div>
