@@ -7,12 +7,14 @@ import {
   BookOpenIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
+  AcademicCapIcon,
 } from '@heroicons/react/24/outline'
 import {
   HomeIcon as HomeIconSolid,
   BookOpenIcon as BookOpenIconSolid,
   ClipboardDocumentListIcon as ClipboardDocumentListIconSolid,
   Cog6ToothIcon as Cog6ToothIconSolid,
+  AcademicCapIcon as AcademicCapIconSolid,
 } from '@heroicons/react/24/solid'
 
 interface NavItem {
@@ -26,6 +28,7 @@ const navItems: NavItem[] = [
   { href: '/dashboard', label: '홈',   Icon: HomeIcon,                 IconActive: HomeIconSolid },
   { href: '/study',     label: '학습', Icon: BookOpenIcon,              IconActive: BookOpenIconSolid },
   { href: '/quiz',      label: '퀴즈', Icon: ClipboardDocumentListIcon, IconActive: ClipboardDocumentListIconSolid },
+  { href: '/classes',   label: '내 반', Icon: AcademicCapIcon,          IconActive: AcademicCapIconSolid },
   { href: '/settings',  label: '설정', Icon: Cog6ToothIcon,             IconActive: Cog6ToothIconSolid },
 ]
 
