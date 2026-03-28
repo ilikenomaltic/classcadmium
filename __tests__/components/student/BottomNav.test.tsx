@@ -7,22 +7,24 @@ vi.mock('next/navigation', () => ({
 }))
 
 describe('BottomNav', () => {
-  it('renders all four navigation items', () => {
+  it('renders all five navigation items', () => {
     render(<BottomNav />)
     expect(screen.getByText('홈')).toBeInTheDocument()
     expect(screen.getByText('학습')).toBeInTheDocument()
     expect(screen.getByText('퀴즈')).toBeInTheDocument()
+    expect(screen.getByText('내 반')).toBeInTheDocument()
     expect(screen.getByText('설정')).toBeInTheDocument()
   })
 
-  it('renders four anchor links with correct hrefs', () => {
+  it('renders five anchor links with correct hrefs', () => {
     render(<BottomNav />)
     const links = screen.getAllByRole('link')
-    expect(links).toHaveLength(4)
+    expect(links).toHaveLength(5)
     const hrefs = links.map(l => l.getAttribute('href'))
     expect(hrefs).toContain('/dashboard')
     expect(hrefs).toContain('/study')
     expect(hrefs).toContain('/quiz')
+    expect(hrefs).toContain('/classes')
     expect(hrefs).toContain('/settings')
   })
 
