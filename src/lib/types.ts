@@ -1,11 +1,13 @@
-export type Role = 'student' | 'teacher'
-export type QuizMode = 'flashcard' | 'ox' | 'blank'
+export type Role = 'student' | 'teacher' | 'admin'
+export type QuizMode = 'flashcard' | 'ox' | 'blank' | 'multiple' | 'element'
+export type Difficulty = 'easy' | 'normal' | 'hard'
 
 export interface Profile {
   id: string
   email: string
   role: Role
   name: string
+  points: number
 }
 
 export interface Category {
@@ -19,6 +21,9 @@ export interface Item {
   front: string
   back: string
   image_url: string | null
+  atomic_number: number | null
+  valence_electrons: number | null
+  element_group: string | null
 }
 
 export interface Class {
@@ -54,6 +59,7 @@ export interface QuizAssignment {
   class_id: string
   due_date: string | null
   mode: QuizMode
+  difficulty: Difficulty
 }
 
 export interface QuizResult {
@@ -62,7 +68,7 @@ export interface QuizResult {
   quiz_set_id: string
   assignment_id: string | null
   score: number
-  answers: Record<string, { given: string; correct: boolean }>
+  answers: { itemId: string; given: string; correct: boolean }[]
   submitted_at: string
 }
 
@@ -86,4 +92,10 @@ export interface QuizSetItemResolved {
   item_id: string | null
   front: string
   back: string
+  front_override: string | null
+  back_override: string | null
+  category_id: string | null
+  atomic_number: number | null
+  valence_electrons: number | null
+  element_group: string | null
 }
