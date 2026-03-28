@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { calculatePoints } from '@/lib/utils/points'
 
 type ActionState = { error: string } | null
 
@@ -64,6 +65,7 @@ export async function createAssignment(_prevState: ActionState, formData: FormDa
     class_id: classId,
     due_date: (formData.get('due_date') as string) || null,
     mode: formData.get('mode') as string,
+    difficulty: (formData.get('difficulty') as string) || 'normal',
   })
   if (error) return { error: error.message }
   revalidatePath('/teacher/assignments')
@@ -75,13 +77,53 @@ export async function submitQuizResult(
   assignmentId: string,
   score: number,
   detail: { itemId: string; given: string; correct: boolean }[]
-) {
+): Promise<{ earnedPoints: number }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: '로그인이 필요합니다.' }
+  if (!user) return { earnedPoints: 0 }
+
+  // assignment 먼저 조회 (quiz_set_id, mode, difficulty 필요)
+  const { data: assignment } = await supabase
+    .from('quiz_assignments')
+    .select('quiz_set_id, mode, difficulty')
+    .eq('id', assignmentId)
+    .single()
+
+  if (!assignment) return { earnedPoints: 0 }
+
+  // Check if this is the first submission
+  const { data: existing } = await supabase
+    .from('quiz_results')
+    .select('id')
+    .eq('student_id', user.id)
+    .eq('assignment_id', assignmentId)
+    .maybeSingle()
+
+  const isFirstSubmission = !existing
 
   await supabase.from('quiz_results').upsert(
-    { student_id: user.id, assignment_id: assignmentId, score, answers: detail },
+    {
+      student_id: user.id,
+      assignment_id: assignmentId,
+      quiz_set_id: assignment.quiz_set_id,
+      score,
+      answers: detail,
+    },
     { onConflict: 'student_id,assignment_id' }
   )
+
+  if (!isFirstSubmission) return { earnedPoints: 0 }
+
+  const earnedPoints = calculatePoints(
+    detail.length,
+    assignment.mode ?? 'flashcard',
+    assignment.difficulty ?? 'normal',
+    score
+  )
+
+  if (earnedPoints > 0) {
+    await supabase.rpc('add_points', { p_user_id: user.id, p_amount: earnedPoints })
+  }
+
+  return { earnedPoints }
 }

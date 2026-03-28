@@ -13,6 +13,14 @@ const MODES = [
   { value: 'flashcard', label: '플래시카드' },
   { value: 'ox', label: 'OX 퀴즈' },
   { value: 'blank', label: '빈칸 채우기' },
+  { value: 'multiple', label: '4지선다' },
+  { value: 'element', label: '원소 퀴즈' },
+]
+
+const DIFFICULTIES = [
+  { value: 'easy', label: '쉬움' },
+  { value: 'normal', label: '보통' },
+  { value: 'hard', label: '어려움' },
 ]
 
 export default function AssignmentForm({
@@ -73,6 +81,14 @@ export default function AssignmentForm({
                 {MODES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">난이도</label>
+            <select name="difficulty" required defaultValue="normal"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+              {DIFFICULTIES.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
+            </select>
           </div>
 
           {state?.error && <p className="text-[#FF6B6B] text-sm">{state.error}</p>}

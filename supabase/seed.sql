@@ -83,3 +83,27 @@ insert into public.items (id, category_id, front, back) values
   (gen_random_uuid(), '11111111-0000-0000-0000-000000000004', 'CaCO₃ → CaO + CO₂', '석회석 열분해 — 시멘트 제조, 흡열 반응'),
   (gen_random_uuid(), '11111111-0000-0000-0000-000000000004', 'Zn + 2HCl → ZnCl₂ + H₂↑', '금속과 산의 반응 — 수소 기체 발생, 아연 용해')
 on conflict do nothing;
+
+-- ============================================================
+-- 원소주기율표 — 원소 데이터 (atomic_number, valence_electrons, element_group)
+-- ============================================================
+UPDATE public.items SET atomic_number=1,  valence_electrons=1, element_group='비금속'        WHERE front='H (1)'   AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=2,  valence_electrons=2, element_group='비활성 기체'   WHERE front='He (2)'  AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=3,  valence_electrons=1, element_group='알칼리 금속'   WHERE front='Li (3)'  AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=4,  valence_electrons=2, element_group='알칼리 토금속' WHERE front='Be (4)'  AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=5,  valence_electrons=3, element_group='준금속'        WHERE front='B (5)'   AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=6,  valence_electrons=4, element_group='비금속'        WHERE front='C (6)'   AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=7,  valence_electrons=5, element_group='비금속'        WHERE front='N (7)'   AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=8,  valence_electrons=6, element_group='비금속'        WHERE front='O (8)'   AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=9,  valence_electrons=7, element_group='할로겐'        WHERE front='F (9)'   AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=10, valence_electrons=8, element_group='비활성 기체'   WHERE front='Ne (10)' AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=11, valence_electrons=1, element_group='알칼리 금속'   WHERE front='Na (11)' AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=12, valence_electrons=2, element_group='알칼리 토금속' WHERE front='Mg (12)' AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=13, valence_electrons=3, element_group='금속'          WHERE front='Al (13)' AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=14, valence_electrons=4, element_group='준금속'        WHERE front='Si (14)' AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=15, valence_electrons=5, element_group='비금속'        WHERE front='P (15)'  AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=16, valence_electrons=6, element_group='비금속'        WHERE front='S (16)'  AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=17, valence_electrons=7, element_group='할로겐'        WHERE front='Cl (17)' AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=18, valence_electrons=8, element_group='비활성 기체'   WHERE front='Ar (18)' AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=19, valence_electrons=1, element_group='알칼리 금속'   WHERE front='K (19)'  AND category_id='11111111-0000-0000-0000-000000000001';
+UPDATE public.items SET atomic_number=20, valence_electrons=2, element_group='알칼리 토금속' WHERE front='Ca (20)' AND category_id='11111111-0000-0000-0000-000000000001';
