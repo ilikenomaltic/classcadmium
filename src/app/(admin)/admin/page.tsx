@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import RoleSelect from './RoleSelect'
 import ApproveButtons from './ApproveButtons'
+import DeleteUserButton from './DeleteUserButton'
 
 interface Profile {
   id: string
@@ -84,15 +85,16 @@ export default async function AdminPage() {
       <div>
         <h2 className="text-sm font-semibold text-gray-700 mb-3">전체 가입자 ({total}명)</h2>
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-          <div className="grid grid-cols-[1fr_1.5fr_auto_auto] gap-4 px-5 py-3 border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="grid grid-cols-[1fr_1.5fr_auto_auto_auto] gap-4 px-5 py-3 border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
             <span>이름</span>
             <span>이메일</span>
             <span>가입일</span>
             <span>권한</span>
+            <span>삭제</span>
           </div>
           <div className="divide-y divide-gray-50">
             {rows.map(p => (
-              <div key={p.id} className="grid grid-cols-[1fr_1.5fr_auto_auto] gap-4 px-5 py-3.5 items-center">
+              <div key={p.id} className="grid grid-cols-[1fr_1.5fr_auto_auto_auto] gap-4 px-5 py-3.5 items-center">
                 <div className="min-w-0">
                   <span className="font-medium text-gray-900 text-sm truncate block">{p.name}</span>
                   {p.requested_role === 'teacher' && p.role === 'student' && (
@@ -104,6 +106,7 @@ export default async function AdminPage() {
                   {new Date(p.created_at).toLocaleDateString('ko-KR')}
                 </span>
                 <RoleSelect userId={p.id} currentRole={p.role} />
+                <DeleteUserButton userId={p.id} />
               </div>
             ))}
             {rows.length === 0 && (

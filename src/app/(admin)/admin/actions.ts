@@ -54,3 +54,16 @@ export async function rejectTeacher(userId: string) {
   revalidatePath('/admin')
   return { error: null }
 }
+
+export async function deleteUser(userId: string) {
+  const caller = await verifyAdmin()
+  if (!caller) return { error: '권한이 없습니다.' }
+  if (caller.id === userId) return { error: '자기 자신은 삭제할 수 없습니다.' }
+
+  const admin = createAdminClient()
+  const { error } = await admin.auth.admin.deleteUser(userId)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  return { error: null }
+}
