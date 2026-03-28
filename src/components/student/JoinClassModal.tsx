@@ -65,14 +65,14 @@ export default function JoinClassModal({ isOpen, onClose, onJoined }: JoinClassM
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 z-40"
+            className="fixed inset-0 bg-black/40 z-[60]"
           />
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 z-50 max-w-lg mx-auto"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 z-[70] max-w-lg mx-auto"
           >
             <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-6" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">반 참여하기</h2>
