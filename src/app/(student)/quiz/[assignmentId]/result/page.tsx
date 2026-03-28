@@ -9,9 +9,11 @@ import { staggerContainer, fadeInUp, scaleOnTap } from '@/lib/constants/animatio
 function QuizResult() {
   const sp = useSearchParams()
 
-  const score = Number(sp.get('score') ?? 0)
-  const total = Number(sp.get('total') ?? 0)
-  const correct = Number(sp.get('correct') ?? 0)
+  const score        = Number(sp.get('score') ?? 0)
+  const total        = Number(sp.get('total') ?? 0)
+  const correct      = Number(sp.get('correct') ?? 0)
+  const earnedPoints = Number(sp.get('earnedPoints') ?? 0)
+  const wrongIds     = sp.get('wrongIds') ?? ''
 
   const ringColor =
     score >= 80 ? '#4ECDC4' :
@@ -29,6 +31,7 @@ function QuizResult() {
   return (
     <div className="py-6">
       <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
+        {/* Score ring */}
         <motion.div variants={fadeInUp} className="flex flex-col items-center py-8">
           <div className="relative w-36 h-36">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
@@ -54,11 +57,26 @@ function QuizResult() {
           <p className="text-sm text-gray-500 mt-1">{total}문제 중 {correct}개 정답</p>
         </motion.div>
 
+        {/* Points earned */}
+        {earnedPoints > 0 && (
+          <motion.div
+            variants={fadeInUp}
+            className="flex items-center justify-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4"
+          >
+            <span className="text-2xl">⭐</span>
+            <div>
+              <p className="text-xs text-amber-700 font-medium">포인트 획득!</p>
+              <p className="text-xl font-bold text-amber-800">+{earnedPoints} pt</p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Stats */}
         <motion.div variants={fadeInUp} className="grid grid-cols-3 gap-3">
           {[
-            { label: '총 문제', value: total, color: 'text-gray-900' },
-            { label: '정답', value: correct, color: 'text-[#4ECDC4]' },
-            { label: '오답', value: total - correct, color: 'text-[#FF6B6B]' },
+            { label: '총 문제', value: total,           color: 'text-gray-900' },
+            { label: '정답',   value: correct,          color: 'text-[#4ECDC4]' },
+            { label: '오답',   value: total - correct,  color: 'text-[#FF6B6B]' },
           ].map(stat => (
             <div key={stat.label} className="bg-white rounded-2xl shadow-sm p-4 text-center">
               <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -67,11 +85,22 @@ function QuizResult() {
           ))}
         </motion.div>
 
+        {/* Actions */}
         <motion.div variants={fadeInUp} className="space-y-3">
+          {wrongIds && total - correct > 0 && (
+            <Link href={`/study/session?ids=${wrongIds}`}>
+              <motion.div
+                {...scaleOnTap}
+                className="block w-full py-4 rounded-full bg-indigo-600 text-white font-semibold text-sm text-center"
+              >
+                틀린 문제 다시 풀기 ({total - correct}개)
+              </motion.div>
+            </Link>
+          )}
           <Link href="/quiz">
             <motion.div
               {...scaleOnTap}
-              className="block w-full py-4 rounded-full bg-indigo-600 text-white font-semibold text-sm text-center"
+              className="block w-full py-4 rounded-full bg-gray-100 text-gray-600 font-semibold text-sm text-center"
             >
               퀴즈 목록으로
             </motion.div>
