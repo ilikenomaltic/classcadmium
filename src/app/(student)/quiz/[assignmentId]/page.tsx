@@ -128,12 +128,23 @@ export default function QuizSessionPage({ params }: { params: Promise<{ assignme
   const totalCount = assignment?.mode === 'ox' ? oxItems.length : items.length
   const progress = totalCount > 0 ? (currentIndex / totalCount) * 100 : 0
 
+  function handleExit() {
+    if (confirm('퀴즈를 종료하시겠습니까? 진행 상황이 저장되지 않습니다.')) {
+      router.push('/quiz')
+    }
+  }
+
   return (
     <div className="py-6 space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <button onClick={handleExit} className="text-gray-400 text-sm hover:text-gray-600">✕ 종료</button>
+        <span className="text-xs text-gray-400">{currentIndex + 1} / {totalCount}</span>
+      </div>
+
       {/* Progress bar */}
       <div>
-        <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
-          <span>{currentIndex + 1} / {totalCount}</span>
+        <div className="flex items-center justify-end text-xs text-gray-400 mb-2">
           <span>{Math.round(progress)}%</span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">

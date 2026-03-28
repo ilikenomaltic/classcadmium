@@ -89,7 +89,12 @@ function StudySession() {
   return (
     <div className="py-6">
       <div className="flex items-center justify-between mb-3">
-        <button onClick={() => router.push('/study')} className="text-gray-400 text-sm">✕ 종료</button>
+        <button
+          onClick={() => {
+            if (confirm('학습을 종료하시겠습니까?')) router.push('/study')
+          }}
+          className="text-gray-400 text-sm hover:text-gray-600"
+        >✕ 종료</button>
         <span className="text-sm font-medium text-gray-500">{index + 1} / {cards.length}</span>
       </div>
       <div className="w-full h-1.5 bg-gray-100 rounded-full mb-6 overflow-hidden">
