@@ -142,6 +142,18 @@ function StudySession() {
 
       <p className="text-center text-xs text-gray-400 mt-3">← 스와이프로도 답변 가능</p>
 
+      <div className="flex justify-center gap-2 mt-4">
+        <span className="bg-green-50 border border-green-200 text-green-700 rounded-full px-3 py-1 text-xs font-semibold">
+          ✓ {known.length}
+        </span>
+        <span className="bg-red-50 border border-red-200 text-red-600 rounded-full px-3 py-1 text-xs font-semibold">
+          ✗ {unknown.length}
+        </span>
+        <span className="bg-purple-50 border border-purple-200 text-purple-600 rounded-full px-3 py-1 text-xs font-semibold">
+          — {cards.length - index}
+        </span>
+      </div>
+
       <div className="flex gap-3 mt-6">
         <motion.button
           whileTap={{ scale: 0.96 }}
