@@ -82,7 +82,16 @@ export async function submitQuizResult(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { earnedPoints: 0 }
 
-  // Check if this is the first submission (before upsert overwrites it)
+  // assignment 먼저 조회 (quiz_set_id, mode, difficulty 필요)
+  const { data: assignment } = await supabase
+    .from('quiz_assignments')
+    .select('quiz_set_id, mode, difficulty')
+    .eq('id', assignmentId)
+    .single()
+
+  if (!assignment) return { earnedPoints: 0 }
+
+  // Check if this is the first submission
   const { data: existing } = await supabase
     .from('quiz_results')
     .select('id')
@@ -93,22 +102,22 @@ export async function submitQuizResult(
   const isFirstSubmission = !existing
 
   await supabase.from('quiz_results').upsert(
-    { student_id: user.id, assignment_id: assignmentId, score, answers: detail },
+    {
+      student_id: user.id,
+      assignment_id: assignmentId,
+      quiz_set_id: assignment.quiz_set_id,
+      score,
+      answers: detail,
+    },
     { onConflict: 'student_id,assignment_id' }
   )
 
   if (!isFirstSubmission) return { earnedPoints: 0 }
 
-  const { data: assignment } = await supabase
-    .from('quiz_assignments')
-    .select('mode, difficulty')
-    .eq('id', assignmentId)
-    .single()
-
   const earnedPoints = calculatePoints(
     detail.length,
-    assignment?.mode ?? 'flashcard',
-    assignment?.difficulty ?? 'normal',
+    assignment.mode ?? 'flashcard',
+    assignment.difficulty ?? 'normal',
     score
   )
 
