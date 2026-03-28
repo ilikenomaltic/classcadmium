@@ -31,7 +31,7 @@ export default function SignupPage() {
             <input
               id="name" name="name" type="text" required
               placeholder="홍길동"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
 
@@ -41,7 +41,7 @@ export default function SignupPage() {
               <input
                 id="student_id" name="student_id" type="text" required
                 placeholder="예: 10101"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
             </div>
           )}
@@ -51,7 +51,7 @@ export default function SignupPage() {
             <input
               id="email" name="email" type="email" required
               placeholder="example@school.kr"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
 
@@ -61,7 +61,7 @@ export default function SignupPage() {
               <input
                 id="password" name="password" type={showPassword ? 'text' : 'password'} required minLength={6}
                 placeholder="6자 이상"
-                className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
               <button
                 type="button"

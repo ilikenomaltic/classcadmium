@@ -30,7 +30,7 @@ export default function LoginPage() {
             <input
               id="email" name="email" type="email" required
               placeholder="example@school.kr"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
 
@@ -40,7 +40,7 @@ export default function LoginPage() {
               <input
                 id="password" name="password" type={showPassword ? 'text' : 'password'} required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-4 py-3 pr-11 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
               <button
                 type="button"
