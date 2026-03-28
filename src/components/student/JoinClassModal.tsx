@@ -82,7 +82,7 @@ export default function JoinClassModal({ isOpen, onClose, onJoined }: JoinClassM
               type="text"
               maxLength={6}
               value={code}
-              onChange={e => setCode(e.target.value.toUpperCase())}
+              onChange={e => setCode(e.target.value.trim().toUpperCase())}
               placeholder="ABC123"
               className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 text-center text-2xl font-bold font-mono tracking-widest focus:outline-none focus:border-indigo-500 mb-4"
             />
