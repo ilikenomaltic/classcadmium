@@ -2,12 +2,13 @@
 
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { staggerContainer, fadeInUp, scaleOnTap } from '@/lib/constants/animation'
 
 function QuizResult() {
   const sp = useSearchParams()
+  const params = useParams<{ assignmentId: string }>()
 
   const score        = Number(sp.get('score') ?? 0)
   const total        = Number(sp.get('total') ?? 0)
@@ -88,7 +89,7 @@ function QuizResult() {
         {/* Actions */}
         <motion.div variants={fadeInUp} className="space-y-3">
           {wrongIds && total - correct > 0 && (
-            <Link href={`/study/session?ids=${wrongIds}`}>
+            <Link href={`/quiz/${params.assignmentId}?retry=true&items=${wrongIds}`}>
               <motion.div
                 {...scaleOnTap}
                 className="block w-full py-4 rounded-full bg-indigo-600 text-white font-semibold text-sm text-center"

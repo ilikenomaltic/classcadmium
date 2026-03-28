@@ -82,10 +82,22 @@ export async function submitQuizResult(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { earnedPoints: 0 }
 
+  // Check if this is the first submission (before upsert overwrites it)
+  const { data: existing } = await supabase
+    .from('quiz_results')
+    .select('id')
+    .eq('student_id', user.id)
+    .eq('assignment_id', assignmentId)
+    .maybeSingle()
+
+  const isFirstSubmission = !existing
+
   await supabase.from('quiz_results').upsert(
     { student_id: user.id, assignment_id: assignmentId, score, answers: detail },
     { onConflict: 'student_id,assignment_id' }
   )
+
+  if (!isFirstSubmission) return { earnedPoints: 0 }
 
   const { data: assignment } = await supabase
     .from('quiz_assignments')

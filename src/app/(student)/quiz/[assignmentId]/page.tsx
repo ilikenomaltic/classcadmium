@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState, use } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, use, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fadeInUp } from '@/lib/constants/animation'
@@ -49,9 +49,9 @@ function buildOxItems(items: QuizSetItemResolved[]): OxItem[] {
   })
 }
 
-export default function QuizSessionPage({ params }: { params: Promise<{ assignmentId: string }> }) {
-  const { assignmentId } = use(params)
+function QuizSessionContent({ assignmentId }: { assignmentId: string }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [assignment, setAssignment] = useState<Assignment | null>(null)
   const [items, setItems] = useState<QuizSetItemResolved[]>([])
@@ -103,21 +103,29 @@ export default function QuizSessionPage({ params }: { params: Promise<{ assignme
         element_group: si.items?.element_group ?? null,
       }))
 
-      setItems(resolved)
+      // Apply retry filtering if retry=true
+      const isRetry = searchParams.get('retry') === 'true'
+      const retryIds = searchParams.get('items')?.split(',').filter(Boolean) ?? []
+
+      const finalItems = isRetry && retryIds.length > 0
+        ? resolved.filter(item => item.item_id != null && retryIds.includes(item.item_id))
+        : resolved
+
+      setItems(finalItems)
 
       if (assign.mode === 'ox') {
-        setOxItems(buildOxItems(resolved))
+        setOxItems(buildOxItems(finalItems))
       } else if (assign.mode === 'multiple' || assign.mode === 'element') {
-        const categoryIds = [...new Set(resolved.map(i => i.category_id).filter(Boolean))] as string[]
+        const categoryIds = [...new Set(finalItems.map(i => i.category_id).filter(Boolean))] as string[]
         if (categoryIds.length > 0) {
           const { data: pool } = await supabase
             .from('items')
             .select('id, category_id, front, back, atomic_number, valence_electrons, element_group')
             .in('category_id', categoryIds)
           if (assign.mode === 'multiple') {
-            setMultipleItems(buildMultipleItems(resolved, pool ?? []))
+            setMultipleItems(buildMultipleItems(finalItems, pool ?? []))
           } else {
-            setElementItems(buildElementItems(resolved, pool ?? []))
+            setElementItems(buildElementItems(finalItems, pool ?? []))
           }
         }
       }
@@ -125,7 +133,7 @@ export default function QuizSessionPage({ params }: { params: Promise<{ assignme
       setLoading(false)
     }
     load()
-  }, [assignmentId, router])
+  }, [assignmentId, router, searchParams])
 
   function getTotalCount() {
     switch (assignment?.mode) {
@@ -245,5 +253,14 @@ export default function QuizSessionPage({ params }: { params: Promise<{ assignme
         </AnimatePresence>
       )}
     </div>
+  )
+}
+
+export default function QuizSessionPage({ params }: { params: Promise<{ assignmentId: string }> }) {
+  const { assignmentId } = use(params)
+  return (
+    <Suspense fallback={<div className="py-6 space-y-4"><div className="h-8 w-48 bg-gray-100 rounded animate-pulse" /><div className="h-48 bg-gray-100 rounded-2xl animate-pulse" /></div>}>
+      <QuizSessionContent assignmentId={assignmentId} />
+    </Suspense>
   )
 }

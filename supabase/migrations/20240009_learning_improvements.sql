@@ -33,12 +33,10 @@ ALTER TABLE public.quiz_assignments ADD CONSTRAINT quiz_assignments_difficulty_c
 CREATE OR REPLACE FUNCTION public.add_points(p_user_id uuid, p_amount integer)
 RETURNS void LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  IF p_amount <= 0 THEN
-    RAISE EXCEPTION 'p_amount must be positive';
-  END IF;
+  IF p_amount <= 0 THEN RAISE EXCEPTION 'p_amount must be positive'; END IF;
+  IF p_user_id != auth.uid() THEN RAISE EXCEPTION 'forbidden'; END IF;
   UPDATE public.profiles SET points = points + p_amount WHERE id = p_user_id;
-END;
-$$;
+END; $$;
 
 GRANT EXECUTE ON FUNCTION public.add_points(uuid, integer) TO authenticated;
 
