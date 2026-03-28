@@ -108,7 +108,7 @@ export default function QuizSessionPage({ params }: { params: Promise<{ assignme
       const score = Math.round((correctCount / newAnswers.length) * 100)
       const detail = newAnswers.map(a => ({ itemId: a.itemId, given: a.given, correct: a.correct }))
 
-      await submitQuizResult(userId, assignmentId, score, detail)
+      await submitQuizResult(assignmentId, score, detail)
 
       router.push(`/quiz/${assignmentId}/result?score=${score}&total=${newAnswers.length}&correct=${correctCount}`)
     } else {
