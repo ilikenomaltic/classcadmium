@@ -64,6 +64,7 @@ export async function createAssignment(_prevState: ActionState, formData: FormDa
     class_id: classId,
     due_date: (formData.get('due_date') as string) || null,
     mode: formData.get('mode') as string,
+    difficulty: (formData.get('difficulty') as string) || 'normal',
   })
   if (error) return { error: error.message }
   revalidatePath('/teacher/assignments')
